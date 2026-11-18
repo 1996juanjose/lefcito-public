@@ -1,5 +1,5 @@
 FROM nginx:alpine
-ENV BACKEND_ADDRESS=backend:8080 \
+ENV BACKEND_ADDRESS=n8n_backendgame:8080 \
     NGINX_ENVSUBST_FILTER=^BACKEND_ADDRESS$
 COPY deploy/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY wwwroot/ /usr/share/nginx/html/

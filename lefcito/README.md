@@ -45,7 +45,7 @@ Crea dos servicios **App** dentro del mismo proyecto de EasyPanel que PostgreSQL
 | Servicio | Dockerfile | Puerto interno | Configuración |
 | --- | --- | ---: | --- |
 | Backend | `Dockerfile.backend` | 8080 | Monta un archivo privado con la cadena Npgsql y configura `ConnectionStrings__PostgresFile` con su ruta. Tiene que ser legible por el usuario del contenedor. Para la red interna usa `Host=DB_HOST;Port=5432;Database=lefcito;SSL Mode=Disable` y las credenciales de ese servicio. Elimina el dominio automático del backend si EasyPanel lo crea. |
-| Frontend | `Dockerfile.frontend` | 80 | Configura `BACKEND_ADDRESS` con el nombre interno del backend y sufijo `:8080`. Asocia el dominio solo al frontend y protégelo con HTTPS y el control de acceso de EasyPanel. |
+| Frontend | `Dockerfile.frontend` | 80 | El destino predeterminado es `n8n_backendgame:8080`. Si tu servicio tiene otro nombre, ajusta `BACKEND_ADDRESS` con su nombre interno y puerto. Asocia el dominio solo al frontend y protégelo con HTTPS y el control de acceso de EasyPanel. |
 
 Si la base dedicada aún no tiene el esquema de Lefcito, ejecuta una vez `dotnet Lefcito.dll --init-db` desde la consola del backend. Luego comprueba `/api/jugadores` a través del frontend.
 
