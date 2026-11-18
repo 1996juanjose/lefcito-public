@@ -1,0 +1,13 @@
+**
+!Lefcito.csproj
+!Program.cs
+!Application/
+!Application/**
+!Domain/
+!Domain/**
+!Infrastructure/
+!Infrastructure/**
+!wwwroot/
+!wwwroot/**
+!deploy/
+!deploy/nginx.conf.template

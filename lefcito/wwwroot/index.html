@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Organiza partidas y torneos de Left 4 Dead 2.">
+<title>Lefcito · Partidas y torneos de Left 4 Dead 2</title>
+<link rel="stylesheet" href="/style.css">
+<script src="/app.js" defer></script>
+</head>
+<body>
+<header><div class="bar"><strong>LEFCITO<span>.</span></strong><label>Partida o torneo <select id="tournaments" aria-label="Partida o torneo"></select></label><button class="quiet" id="playersButton">Jugadores</button><button class="quiet" id="rankingButton">Ranking general</button><button class="quiet" id="groupRankingButton">Ranking por grupo</button><button id="new">Crear partida o torneo</button></div></header>
+<main>
+  <p id="error" role="alert" hidden></p>
+  <section id="welcome"><h1>Partidas y torneos de Left 4 Dead 2</h1><p>Forma tus equipos, juega las series y sigue la clasificación individual.</p></section>
+  <section id="tournament" hidden>
+    <div class="hero"><div><p>Left 4 Dead 2 · Eliminación directa</p><h1 id="title"></h1></div><strong id="champion"></strong></div>
+    <div class="section-head"><h2>Cuadro de enfrentamientos</h2><button id="addEncounter" class="quiet" hidden>Añadir enfrentamiento</button></div>
+    <div id="bracket"></div>
+    <div class="section-head"><h2>Clasificación individual</h2><button class="quiet" id="editRules">Editar reglas</button></div>
+    <div class="scroll"><table><thead><tr><th>Jugador</th><th>Equipo</th><th>Ganadas</th><th>Perdidas</th><th>Resultado</th><th>Eventos</th><th>Total</th></tr></thead><tbody id="standings"></tbody></table></div>
+    <h2>Puntaje por grupo</h2>
+    <div class="scroll"><table><thead><tr><th>Grupo</th><th>Ganadas</th><th>Perdidas</th><th>Puntos</th></tr></thead><tbody id="groupScores"></tbody></table></div>
+    <h2>Equipos</h2><div id="rosters"></div>
+  </section>
+</main>
+<dialog id="playerDirectory">
+<form id="registerPlayer">
+<div class="dialog-head"><h2>Jugadores</h2><button class="quiet" type="button" data-close aria-label="Cerrar">×</button></div>
+<label>Nickname <input name="nickname" maxlength="40" required></label>
+<p class="form-error" role="alert"></p><button>Registrar jugador</button>
+</form>
+<h3>Jugadores registrados</h3><ul id="registeredPlayers" class="roster"></ul>
+</dialog>
+<dialog id="globalRanking">
+<div class="dialog-head"><h2>Ranking general</h2><button class="quiet" type="button" data-close aria-label="Cerrar">×</button></div>
+<p>Puntos acumulados de partidas y torneos. Incluye marcadores libres en curso.</p>
+<div class="scroll"><table><thead><tr><th>Jugador</th><th>Ganadas</th><th>Perdidas</th><th>Resultado</th><th>Eventos</th><th>Total</th></tr></thead><tbody id="rankingRows"></tbody></table></div>
+</dialog>
+<dialog id="groupRanking">
+<div class="dialog-head"><h2>Ranking por grupo</h2><button class="quiet" type="button" data-close aria-label="Cerrar">×</button></div>
+<p>Los puntos de victoria o derrota se aplican una vez por grupo. Los marcadores libres en curso cuentan provisionalmente.</p>
+<div class="scroll"><table><thead><tr><th>Grupo</th><th>Ganadas</th><th>Perdidas</th><th>Puntos</th></tr></thead><tbody id="groupRankingRows"></tbody></table></div>
+</dialog>
+<dialog id="setup">
+<form id="create">
+<div class="dialog-head"><h2>Crear partida o torneo</h2><button class="quiet" type="button" data-close aria-label="Cerrar">×</button></div>
+<label>Nombre <input name="name" maxlength="80" required placeholder="Ej. Partida del viernes"></label>
+<div class="fields"><label>Tipo <select id="mode" name="mode"><option value="partida" selected>Partida</option><option value="torneo">Torneo</option></select></label>
+<label id="teamCountField" hidden>Equipos <select id="teamCount"><option selected>2</option><option>3</option><option>4</option></select></label>
+<label id="semiFormatField" hidden>Semifinales <select name="semiBestOf" class="format"></select></label><label id="finalFormatField" hidden>Final <select name="finalBestOf" class="format"></select></label></div>
+<p id="formatNote"></p>
+<p>Selecciona un grupo guardado o arma uno nuevo. Al crear la partida o torneo, se guarda su alineación para la próxima vez.</p>
+<div id="teamFields"></div>
+<h3>Puntaje por jugador</h3>
+<div class="fields"><label>Ganar <input name="win" type="number" min="0" max="10000" step="any" value="1" required></label>
+<label>Perder <input name="loss" type="number" min="-10000" max="0" step="any" value="-1" required></label></div>
+<h3>Reglas de eventos</h3><div id="ruleFields"></div><button class="quiet" type="button" id="addRule">Añadir regla</button>
+<p class="form-error" role="alert"></p><button>Crear cuadro</button>
+</form>
+</dialog>
+<dialog id="scoring">
+<form id="updateRules">
+<div class="dialog-head"><h2>Reglas de puntaje</h2><button class="quiet" type="button" data-close aria-label="Cerrar">×</button></div>
+<p>Los cambios recalculan las series anteriores. Conserva los nombres de los eventos ya registrados.</p>
+<div class="fields"><label>Ganar <input name="win" type="number" min="0" max="10000" step="any" required></label>
+<label>Perder <input name="loss" type="number" min="-10000" max="0" step="any" required></label></div>
+<div id="activeRuleFields"></div><button class="quiet" type="button" id="addActiveRule">Añadir regla</button>
+<p class="form-error" role="alert"></p><button>Guardar reglas</button>
+</form>
+</dialog>
+<dialog id="editor">
+<form id="score">
+<div class="dialog-head"><h2 id="matchTitle"></h2><button class="quiet" type="button" data-close aria-label="Cerrar">×</button></div>
+<label id="encounterFormatField">Formato del enfrentamiento <select id="encounterFormat" name="format"></select></label>
+<p id="target"></p><div id="scoreFields" class="fields"></div>
+<label id="closeEncounter" class="player-choice"><input name="closed" type="checkbox"> Cerrar enfrentamiento y bloquear la edición</label>
+<h3>Eventos individuales</h3>
+<p>En marcador libre los puntos se actualizan al guardar. En series al mejor de varias rondas, se aplican al terminar.</p>
+<div id="events"></div><button class="quiet" type="button" id="addEvent">Añadir evento</button>
+<p class="form-error" role="alert"></p><button id="saveScore">Guardar marcador</button>
+</form>
+</dialog>
+</body></html>

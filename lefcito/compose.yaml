@@ -1,0 +1,42 @@
+name: lefcito
+
+x-backend: &backend
+  image: lefcito-backend:local
+  build:
+    context: .
+    dockerfile: Dockerfile.backend
+  environment:
+    ConnectionStrings__PostgresFile: /run/secrets/lefcito_db
+  secrets:
+    - lefcito_db
+
+services:
+  init:
+    <<: *backend
+    command: ["--init-db"]
+    restart: "no"
+
+  backend:
+    <<: *backend
+    restart: unless-stopped
+    depends_on:
+      init:
+        condition: service_completed_successfully
+
+  frontend:
+    image: lefcito-frontend:local
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    environment:
+      BACKEND_ADDRESS: backend:8080
+    ports:
+      - "${LEFCITO_BIND:-127.0.0.1}:${LEFCITO_PORT:-8088}:80"
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+
+secrets:
+  lefcito_db:
+    environment: LEFCITO_DB_CONNECTION
